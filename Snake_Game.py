@@ -17,6 +17,7 @@ REFRESH_RATE = 10
 FONT = pygame.font.SysFont("arialblack", 20)
 WELCOME = "Welcome to Mr P's Snake Game. Press 'SPACEBAR' to start."
 END_GAME = "You have died. Game Over."
+PLAY_AGAIN = "Press 'SPACEBAR' to play again. Press 'ESC' to quit."
 
 screen = pygame.display.set_mode((SCR_WIDTH,SCR_HEIGHT))
 pygame.display.set_icon(pygame.image.load(GAME_ICON))
@@ -57,8 +58,7 @@ def draw_food(food_x, food_y):
     resized_apple = pygame.transform.smoothscale(apple, [20, 20])
     screen.blit(resized_apple, food)
    
-def game_loop():
-    
+def game_loop():   
     quit_game = True
     snake_x = 200
     snake_y = 200
@@ -112,6 +112,7 @@ def game_loop():
             message(END_GAME, colour["black"], colour["red"],
                 (SCR_WIDTH/2),(SCR_HEIGHT/2))
             pygame.display.update()
+            time.sleep(3)
             quit_game = True
         
         if snake_x == food_x and snake_y == food_y:
@@ -139,7 +140,7 @@ def game_loop():
         pygame.display.update()
         clock.tick(REFRESH_RATE)
         
-    #End of While Loop
+    #End of While Loop. Start of End Game.
 
     if score > int(high_score):
         high_score_file(True, score)
@@ -147,11 +148,23 @@ def game_loop():
         message("New High Score: " + str(score),
                 colour["black"],colour["blue"],(SCR_WIDTH/2),(SCR_HEIGHT/3))
         pygame.display.update()
+        time.sleep(3)
         
+    while quit_game == True:
+        screen.fill(colour["green"])
+        message(PLAY_AGAIN, colour["black"], colour["green"],
+                (SCR_WIDTH/2),(SCR_HEIGHT/2))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    game_loop()
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    quit()
     
-    time.sleep(3)
-    pygame.quit()
-    quit()
+    
+    
 
 game_loop()
 
