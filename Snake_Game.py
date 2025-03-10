@@ -4,8 +4,9 @@ import random
 
 pygame.init()
 clock = pygame.time.Clock()
-colours = {"white": (255, 255, 255), "green": (188, 227, 199),
-           "black": (0, 0, 0), "red": (255, 0, 0), "blue": (166, 230, 255)}
+colour = {"white": (255, 255, 255), "green": (188, 227, 199),
+           "black": (0, 0, 0), "red": (255, 0, 0), "blue": (166, 230, 255),
+          "snake_body":(112, 79, 232), "snake_head":(84, 56, 186)}
 
 
 SCR_WIDTH = 1000
@@ -42,12 +43,20 @@ def message(msg, txt_colour, bkgd_colour, x_pos, y_pos):
 
 def draw_snake(snake_list):
     for x in snake_list:
-        pygame.draw.rect(screen, colours["black"], [x[0], x[1], 20, 20])
-
+        pygame.draw.rect(screen, colour["snake_body"], [x[0], x[1], 20, 20])
+        if x == snake_list[-1]:
+            pygame.draw.rect(screen, colour["snake_head"], [x[0], x[1], 20, 20])
+            
 def food_loc(pos):
     coordinate = round(random.randrange(20, pos-20)/20)*20
     return coordinate
-    
+
+def draw_food(food_x, food_y):
+    food = pygame.Rect(food_x, food_y, 20, 20)
+    apple = pygame.image.load("apple_3.png").convert_alpha()
+    resized_apple = pygame.transform.smoothscale(apple, [20, 20])
+    screen.blit(resized_apple, food)
+   
 def game_loop():
     
     quit_game = True
@@ -61,8 +70,8 @@ def game_loop():
     food_y = food_loc(SCR_HEIGHT)
 
     while quit_game == True:
-        screen.fill(colours["green"])
-        message(WELCOME, colours["black"], colours["green"],
+        screen.fill(colour["green"])
+        message(WELCOME, colour["black"], colour["green"],
                 (SCR_WIDTH/2),(SCR_HEIGHT/2))
         pygame.display.update()
         for event in pygame.event.get():
@@ -91,16 +100,16 @@ def game_loop():
                     snake_x_change = 0
                     snake_y_change = 20
                     
-        screen.fill(colours["white"])
+        screen.fill(colour["white"])
         snake_x += snake_x_change
         snake_y += snake_y_change
 
-        pygame.draw.rect(screen, colours["red"], [food_x, food_y, 20, 20])
+        draw_food(food_x, food_y)
 
         if (snake_x >= SCR_WIDTH or snake_x < 0 or
         snake_y >= SCR_HEIGHT or snake_y < 0):
-            screen.fill(colours["red"])
-            message(END_GAME, colours["black"], colours["red"],
+            screen.fill(colour["red"])
+            message(END_GAME, colour["black"], colour["red"],
                 (SCR_WIDTH/2),(SCR_HEIGHT/2))
             pygame.display.update()
             quit_game = True
@@ -123,9 +132,9 @@ def game_loop():
                 quit_game= True
         draw_snake(snake_list)
         
-        message("Score: " + str(score), colours["black"],colours["white"],50,20)
+        message("Score: " + str(score), colour["black"],colour["white"],50,20)
         message("High Score: " + str(high_score),
-                colours["black"],colours["white"],(SCR_WIDTH-80),20)
+                colour["black"],colour["white"],(SCR_WIDTH-80),20)
 
         pygame.display.update()
         clock.tick(REFRESH_RATE)
@@ -134,9 +143,9 @@ def game_loop():
 
     if score > int(high_score):
         high_score_file(True, score)
-        screen.fill(colours["blue"])
+        screen.fill(colour["blue"])
         message("New High Score: " + str(score),
-                colours["black"],colours["blue"],(SCR_WIDTH/2),(SCR_HEIGHT/3))
+                colour["black"],colour["blue"],(SCR_WIDTH/2),(SCR_HEIGHT/3))
         pygame.display.update()
         
     
