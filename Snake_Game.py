@@ -18,6 +18,12 @@ screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_icon(pygame.image.load(GAME_ICON))
 pygame.display.set_caption(GAME_NAME)
 
+snake_list = []
+snake_length = 1 
+
+def draw_snake(snake_list):
+    for x in snake_list:
+        pygame.draw.rect(screen, colours["black"], [x[0], x[1], 20, 20])
 
 def game_loop():
     quit_game = False
@@ -25,6 +31,7 @@ def game_loop():
     snake_y = 200
     snake_x_change = 0
     snake_y_change = 0
+    score = 0
     food_x = round(random.randrange(20, SCREEN_WIDTH-20)/20)*20
     food_y = round(random.randrange(20, SCREEN_HEIGHT-20)/20)*20
     
@@ -49,8 +56,32 @@ def game_loop():
         screen.fill(colours["white"])
         snake_x += snake_x_change
         snake_y += snake_y_change
-        pygame.draw.rect(screen, colours["black"], [snake_x, snake_y, 20, 20])
+
         pygame.draw.rect(screen, colours["red"], [food_x, food_y, 20, 20])
+
+        if (snake_x >= SCREEN_WIDTH or snake_x < 0 or
+        snake_y >= SCREEN_HEIGHT or snake_y < 0):
+            quit_game = True
+        
+        if snake_x == food_x and snake_y == food_y:
+            snake_list.append(snake_head)
+            food_x = round(random.randrange(20, SCREEN_WIDTH-20)/20)*20
+            food_y = round(random.randrange(20, SCREEN_HEIGHT-20)/20)*20
+            print(score)
+            score += 1
+
+        snake_head = []
+        snake_head.append(snake_x)
+        snake_head.append(snake_y)   
+        snake_list.append(snake_head)
+        if len(snake_list) > snake_length:
+            del snake_list[0]
+        for x in snake_list[:-1]:
+            if x == snake_head:
+                quit_game= True
+        draw_snake(snake_list)
+
+
         pygame.display.update()
         clock.tick(REFRESH_RATE)
         
